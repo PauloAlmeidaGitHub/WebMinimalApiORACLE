@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using WebMinimalApiORACLE.Config;
 using WebMinimalApiORACLE.Models;
 
@@ -79,17 +80,19 @@ app.MapGet("ORGAO/ListarOrgaos", async (Contexto contexto) =>
 //===========================================================================
 app.MapGet("ORGAO/GetSubstitutoByOrgao/{orgaoId}", async (int orgaoId, Contexto contexto) =>
 {
-    //return await contexto.ORGA_FOTR_SUB.ToListAsync();
 
-    List<OrgaFotrSub> L = new List<OrgaFotrSub>();
-    L = await contexto.ORGA_FOTR_SUB.ToListAsync();
-    for (int i = L.Count -1 ; i >= 0; i--)
-    {
-        if (L[i].ORGA_CD_ORGAO != orgaoId)
-        {
-            L.RemoveAt(i);
-        }
-    }
-    return L;
+    IEnumerable<OrgaFotrSub> enumerableOrgaos = await contexto.ORGA_FOTR_SUB.Where(x => x.ORGA_CD_ORGAO == orgaoId).ToListAsync();
+    return enumerableOrgaos;
+
+    //List<OrgaFotrSub> L = new List<OrgaFotrSub>();
+    //L = await contexto.ORGA_FOTR_SUB.ToListAsync();
+    //for (int i = L.Count -1 ; i >= 0; i--)
+    //{
+    //    if (L[i].ORGA_CD_ORGAO != orgaoId)
+    //    {
+    //        L.RemoveAt(i);
+    //    }
+    //}
+    //return L;
 });
 app.Run();
