@@ -6,7 +6,7 @@ using WebMinimalApiORACLE.Models;
 var strConnection = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)" +
                     "(HOST=SCADUFAX)(PORT=1521))" +
                     "(CONNECT_DATA=(SERVICE_NAME=XEPDB1)));" +
-                    "User Id=Y2F0;Password=Ganzahtn19;";
+                    "User Id=Y2F0;Password=y2f0;";
 
 // Services
 var builder = WebApplication.CreateBuilder(args);
@@ -24,48 +24,72 @@ app.UseSwaggerUI();
 // Protocolos HTTP
 // Insert
 //===========================================================================
-app.MapPost("AdicionarProduto", async (Produto produto, Contexto contexto) =>
+app.MapPost("PRODUTO/AdicionarProduto", async (Produto produto, Contexto contexto) =>
 {
-    contexto.Produto.Add(produto);
+    contexto.PRODUTO.Add(produto);
     await contexto.SaveChangesAsync();
 });
 
 // Update
 //===========================================================================
-app.MapPut("AlterarProduto", async (Produto produto, Contexto contexto) =>
+app.MapPut("PRODUTO/AlterarProduto", async (Produto produto, Contexto contexto) =>
 {
     if (produto != null)
     {
-        contexto.Produto.Update(produto);
+        contexto.PRODUTO.Update(produto);
         await contexto.SaveChangesAsync();
     }
 });
 
 // Delete
 //===========================================================================
-app.MapDelete("ExcluirProduto/{id}", async (int id, Contexto contexto) =>
+app.MapDelete("PRODUTO/ExcluirProduto/{id}", async (int id, Contexto contexto) =>
 {
-    var produto = await contexto.Produto.FirstOrDefaultAsync(p=> p.Id == id);
+    var produto = await contexto.PRODUTO.FirstOrDefaultAsync(p=> p.ID == id);
     if(produto != null)
     {
-        contexto.Produto.Remove(produto);
+        contexto.PRODUTO.Remove(produto);
         await contexto.SaveChangesAsync();
     }
 });
 
-// GetAll
+// PRODUTO/GetAll
 //===========================================================================
-app.MapGet("ListarProdutos", async (Contexto contexto) =>
+app.MapGet("PRODUTO/ListarProdutos", async (Contexto contexto) =>
 {
-    return await contexto.Produto.ToListAsync();
+    return await contexto.PRODUTO.ToListAsync();
 });
 
 // GetById
 //===========================================================================
-app.MapGet("ObterProduto/{id}", async (int id, Contexto contexto) =>
+app.MapGet("PRODUTO/ObterProduto/{id}", async (int id, Contexto contexto) =>
 {
-    return await contexto.Produto.FirstOrDefaultAsync(p => p.Id == id);
+    return await contexto.PRODUTO.FirstOrDefaultAsync(p => p.ID == id);
 });
 
 
+
+// ORGAO/GetAll
+//===========================================================================
+app.MapGet("ORGAO/ListarOrgaos", async (Contexto contexto) =>
+{
+    return await contexto.ORGA_FOTR_SUB.ToListAsync();
+});
+// GetSubstitutoByOrgao
+//===========================================================================
+app.MapGet("ORGAO/GetSubstitutoByOrgao/{orgaoId}", async (int orgaoId, Contexto contexto) =>
+{
+    //return await contexto.ORGA_FOTR_SUB.ToListAsync();
+
+    List<OrgaFotrSub> L = new List<OrgaFotrSub>();
+    L = await contexto.ORGA_FOTR_SUB.ToListAsync();
+    for (int i = L.Count -1 ; i >= 0; i--)
+    {
+        if (L[i].ORGA_CD_ORGAO != orgaoId)
+        {
+            L.RemoveAt(i);
+        }
+    }
+    return L;
+});
 app.Run();

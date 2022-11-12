@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using WebMinimalApiORACLE.Models;
 
 namespace WebMinimalApiORACLE.Config
@@ -7,9 +8,10 @@ namespace WebMinimalApiORACLE.Config
     {
         public Contexto(DbContextOptions<Contexto> options) : base(options)
         {
-            Database.EnsureCreated();  // Se o Banco não existe será criado
+            Database.EnsureCreated();  // Se o Banco não existir será criado
         }
 
-        public DbSet<Produto> Produto {get; set;}
+        public DbSet<Produto> PRODUTO{get; set;}
+        public DbSet<OrgaFotrSub> ORGA_FOTR_SUB { get; set; }
     }
 }
