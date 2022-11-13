@@ -1,6 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
-using System.Linq;
 using WebMinimalApiORACLE.Config;
 using WebMinimalApiORACLE.Models;
 
