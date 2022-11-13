@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 using System.Linq;
 using WebMinimalApiORACLE.Config;
 using WebMinimalApiORACLE.Models;
@@ -22,8 +23,12 @@ app.UseSwaggerUI();
 
 
 
-// Protocolos HTTP
-// Insert
+
+
+// VERBOS HTTP PRODUTO
+
+#region PRODUTO
+// PRODUTO/Insert
 //===========================================================================
 app.MapPost("PRODUTO/AdicionarProduto", async (Produto produto, Contexto contexto) =>
 {
@@ -31,7 +36,7 @@ app.MapPost("PRODUTO/AdicionarProduto", async (Produto produto, Contexto context
     await contexto.SaveChangesAsync();
 });
 
-// Update
+// PRODUTO/Update
 //===========================================================================
 app.MapPut("PRODUTO/AlterarProduto", async (Produto produto, Contexto contexto) =>
 {
@@ -42,12 +47,12 @@ app.MapPut("PRODUTO/AlterarProduto", async (Produto produto, Contexto contexto) 
     }
 });
 
-// Delete
+// PRODUTO/Delete
 //===========================================================================
 app.MapDelete("PRODUTO/ExcluirProduto/{id}", async (int id, Contexto contexto) =>
 {
-    var produto = await contexto.PRODUTO.FirstOrDefaultAsync(p=> p.ID == id);
-    if(produto != null)
+    var produto = await contexto.PRODUTO.FirstOrDefaultAsync(p => p.ID == id);
+    if (produto != null)
     {
         contexto.PRODUTO.Remove(produto);
         await contexto.SaveChangesAsync();
@@ -61,14 +66,56 @@ app.MapGet("PRODUTO/ListarProdutos", async (Contexto contexto) =>
     return await contexto.PRODUTO.ToListAsync();
 });
 
-// GetById
+// PRODUTO/GetById
 //===========================================================================
 app.MapGet("PRODUTO/ObterProduto/{id}", async (int id, Contexto contexto) =>
 {
     return await contexto.PRODUTO.FirstOrDefaultAsync(p => p.ID == id);
 });
+#endregion
 
 
+
+
+// VERBOS HTTP SUBSTITUTO
+#region SUBSTITUTO
+// Substituto/Insert
+//===========================================================================
+app.MapPost("ORGAO/AdicionarSubstituto", async (OrgaFotrSub substituto, Contexto contexto) =>
+{
+    contexto.ORGA_FOTR_SUB.Add(substituto);
+    await contexto.SaveChangesAsync();
+});
+// Substituto/Update
+//===========================================================================
+app.MapPut("ORGAO/AlterarSubstituto", async (OrgaFotrSub substituto, Contexto contexto) =>
+{
+    if (substituto != null)
+    {
+        contexto.ORGA_FOTR_SUB.Update(substituto);
+        await contexto.SaveChangesAsync();
+    }
+});
+
+// Substituto/Delete
+//===========================================================================
+app.MapDelete("ORGAO/ExcluirSubstituto/{id}", async (OrgaFotrSub substituto, Contexto contexto) =>
+{
+    IEnumerable<OrgaFotrSub> enumerableOrgaos = await contexto.ORGA_FOTR_SUB
+                .Where(
+                        x => x.ORGA_CD_ORGAO == substituto.ORGA_CD_ORGAO && 
+                        x.FOTR_CD_FORCA_TRABALHO == substituto.FOTR_CD_FORCA_TRABALHO
+                      ).ToListAsync();
+
+    if (enumerableOrgaos != null && enumerableOrgaos.Count() > 0)
+    {
+            foreach(OrgaFotrSub s in enumerableOrgaos)
+            {
+                contexto.ORGA_FOTR_SUB.Remove(s);
+                await contexto.SaveChangesAsync();
+            }
+    }
+});
 
 // ORGAO/GetAll
 //===========================================================================
@@ -96,3 +143,4 @@ app.MapGet("ORGAO/GetSubstitutoByOrgao/{orgaoId}", async (int orgaoId, Contexto 
     //return L;
 });
 app.Run();
+#endregion
